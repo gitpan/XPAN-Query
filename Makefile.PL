@@ -24,14 +24,22 @@ my %WriteMakefileArgs = (
   ],
   "LICENSE" => "perl",
   "NAME" => "XPAN::Query",
-  "PREREQ_PM" => {},
+  "PREREQ_PM" => {
+    "File::Slurp::Tiny" => 0,
+    "LWP::UserAgent" => 0,
+    "Log::Any" => 0,
+    "Perinci::CmdLine" => "1.04",
+    "Sereal" => 0,
+    "String::ShellQuote" => 0,
+    "URI" => 0
+  },
   "TEST_REQUIRES" => {
     "File::Spec" => 0,
     "IO::Handle" => 0,
     "IPC::Open3" => 0,
     "Test::More" => 0
   },
-  "VERSION" => "0.01",
+  "VERSION" => "0.02",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -39,10 +47,17 @@ my %WriteMakefileArgs = (
 
 
 my %FallbackPrereqs = (
+  "File::Slurp::Tiny" => 0,
   "File::Spec" => 0,
   "IO::Handle" => 0,
   "IPC::Open3" => 0,
-  "Test::More" => 0
+  "LWP::UserAgent" => 0,
+  "Log::Any" => 0,
+  "Perinci::CmdLine" => "1.04",
+  "Sereal" => 0,
+  "String::ShellQuote" => 0,
+  "Test::More" => 0,
+  "URI" => 0
 );
 
 

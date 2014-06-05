@@ -2,7 +2,7 @@ NAME
     XPAN::Query - Query a {CPAN,MiniCPAN,DarkPAN} mirror
 
 VERSION
-    This document describes version 0.01 of XPAN::Query (from Perl
+    This document describes version 0.02 of XPAN::Query (from Perl
     distribution XPAN-Query), released on 2014-06-05.
 
 SYNOPSIS
@@ -28,6 +28,67 @@ DESCRIPTION
     With this module, you can query various things about the repository.
     This module fetches "02packages.details.txt.gz" and parses it (caching
     it locally for a period of time).
+
+FUNCTIONS
+  list_xpan_authors(%args) -> any
+    List authors in {CPAN,MiniCPAN,DarkPAN} mirror.
+
+    Arguments ('*' denotes required arguments):
+
+    *   cache_period => *int* (default: 86400)
+
+    *   temp_dir => *str*
+
+    *   url* => *str*
+
+        URL to repository, e.g. '/cpan' or 'http://host/cpan'.
+
+    Return value:
+
+  list_xpan_dists(%args) -> any
+    List distributions in {CPAN,MiniCPAN,DarkPAN} mirror.
+
+    Arguments ('*' denotes required arguments):
+
+    *   cache_period => *int* (default: 86400)
+
+    *   temp_dir => *str*
+
+    *   url* => *str*
+
+        URL to repository, e.g. '/cpan' or 'http://host/cpan'.
+
+    Return value:
+
+  list_xpan_modules(%args) -> any
+    List modules in {CPAN,MiniCPAN,DarkPAN} mirror.
+
+    Arguments ('*' denotes required arguments):
+
+    *   cache_period => *int* (default: 86400)
+
+    *   temp_dir => *str*
+
+    *   url* => *str*
+
+        URL to repository, e.g. '/cpan' or 'http://host/cpan'.
+
+    Return value:
+
+  list_xpan_packages(%args) -> any
+    List packages in {CPAN,MiniCPAN,DarkPAN} mirror.
+
+    Arguments ('*' denotes required arguments):
+
+    *   cache_period => *int* (default: 86400)
+
+    *   temp_dir => *str*
+
+    *   url* => *str*
+
+        URL to repository, e.g. '/cpan' or 'http://host/cpan'.
+
+    Return value:
 
 SEE ALSO
     Parse::CPAN::Packages
