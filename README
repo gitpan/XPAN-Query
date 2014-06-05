@@ -2,7 +2,7 @@ NAME
     XPAN::Query - Query a {CPAN,MiniCPAN,DarkPAN} mirror
 
 VERSION
-    This document describes version 0.02 of XPAN::Query (from Perl
+    This document describes version 0.03 of XPAN::Query (from Perl
     distribution XPAN-Query), released on 2014-06-05.
 
 SYNOPSIS
@@ -37,6 +37,8 @@ FUNCTIONS
 
     *   cache_period => *int* (default: 86400)
 
+    *   query => *str*
+
     *   temp_dir => *str*
 
     *   url* => *str*
@@ -52,6 +54,8 @@ FUNCTIONS
 
     *   cache_period => *int* (default: 86400)
 
+    *   query => *str*
+
     *   temp_dir => *str*
 
     *   url* => *str*
@@ -61,11 +65,13 @@ FUNCTIONS
     Return value:
 
   list_xpan_modules(%args) -> any
-    List modules in {CPAN,MiniCPAN,DarkPAN} mirror.
+    List packages in {CPAN,MiniCPAN,DarkPAN} mirror.
 
     Arguments ('*' denotes required arguments):
 
     *   cache_period => *int* (default: 86400)
+
+    *   query => *str*
 
     *   temp_dir => *str*
 
@@ -81,6 +87,8 @@ FUNCTIONS
     Arguments ('*' denotes required arguments):
 
     *   cache_period => *int* (default: 86400)
+
+    *   query => *str*
 
     *   temp_dir => *str*
 

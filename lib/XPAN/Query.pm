@@ -22,7 +22,7 @@ our @EXPORT_OK = qw(
                );
 
 our %SPEC;
-our $VERSION = '0.02'; # VERSION
+our $VERSION = '0.03'; # VERSION
 our $DATE = '2014-06-05'; # DATE
 
 my %common_args = (
@@ -35,11 +35,22 @@ my %common_args = (
     cache_period => {
         schema => [int => default => 86400],
         cmdline_aliases => {
-            nocache => { code => sub { $_[0]{cache_period} = 0 } },
+            nocache => {
+                schema => [bool => {is=>1}],
+                code   => sub { $_[0]{cache_period} = 0 },
+            },
         },
     },
     temp_dir => {
         schema => 'str*',
+    },
+);
+
+my %query_args = (
+    query => {
+        schema => 'str*',
+        cmdline_aliases => {q=>{}},
+        pos => 1,
     },
 );
 
@@ -93,6 +104,7 @@ sub _parse {
             next unless /\S/;
             next if /^\S+:\s/;
             chomp;
+            #say "D:$_";
             my ($pkg, $ver, $path) = split /\s+/, $_;
             $ver = undef if $ver eq 'undef';
             my ($author, $file) = $path =~ m!^./../(.+?)/(.+)!
@@ -101,11 +113,12 @@ sub _parse {
             $packages{$pkg} = $ver;
             my $dist = $file;
             # XXX should've extract metadata
+            say "D:file=$file";
             if ($dist =~ s/-v?(\d(?:\d*(\.[\d_][^.]*)*?)?).\D.+//) {
+                #say "D:  dist=$dist, 1=$1";
                 $dists{$dist} = $1;
-
             } else {
-                #warn "Line $line: Can't parse dist version from filename $file";
+                warn "Line $line: Can't parse dist version from filename $file";
                 #next;
             }
         }
@@ -125,13 +138,20 @@ $SPEC{list_xpan_authors} = {
     summary => 'List authors in {CPAN,MiniCPAN,DarkPAN} mirror',
     args => {
         %common_args,
+        %query_args,
     },
     result_naked => 1,
 };
 sub list_xpan_authors {
     my %args = @_;
     my $data = _parse(%args);
-    $data->{authors};
+    my $q = lc($args{query} // '');
+    my $res = [];
+    for (@{ $data->{authors} }) {
+        next if length($q) && index(lc($_), $q) < 0;
+        push @$res, $_;
+    }
+    $res;
 }
 
 $SPEC{list_xpan_packages} = {
@@ -139,27 +159,26 @@ $SPEC{list_xpan_packages} = {
     summary => 'List packages in {CPAN,MiniCPAN,DarkPAN} mirror',
     args => {
         %common_args,
+        %query_args,
     },
     result_naked => 1,
 };
 sub list_xpan_packages {
     my %args = @_;
     my $data = _parse(%args);
-    $data->{packages};
+    my $q = lc($args{query} // '');
+    my $res = {};
+    for (keys %{ $data->{packages} }) {
+        my $ver = $data->{packages}{$_};
+        next if length($q) && index(lc($_), $q) < 0;
+        $res->{$_} = $ver;
+    }
+    $res;
 }
 
-$SPEC{list_xpan_modules} = {
-    v => 1.1,
-    summary => 'List modules in {CPAN,MiniCPAN,DarkPAN} mirror',
-    args => {
-        %common_args,
-    },
-    result_naked => 1,
-};
+$SPEC{list_xpan_modules} = $SPEC{list_xpan_packages};
 sub list_xpan_modules {
-    my %args = @_;
-    my $data = _parse(%args);
-    $data->{packages};
+    goto &list_xpan_packages;
 }
 
 $SPEC{list_xpan_dists} = {
@@ -167,13 +186,21 @@ $SPEC{list_xpan_dists} = {
     summary => 'List distributions in {CPAN,MiniCPAN,DarkPAN} mirror',
     args => {
         %common_args,
+        %query_args,
     },
     result_naked => 1,
 };
 sub list_xpan_dists {
     my %args = @_;
     my $data = _parse(%args);
-    $data->{dists};
+    my $q = lc($args{query} // '');
+    my $res = {};
+    for (keys %{ $data->{dists} }) {
+        my $ver = $data->{dists}{$_};
+        next if length($q) && index(lc($_), $q) < 0;
+        $res->{$_} = $ver;
+    }
+    $res;
 }
 
 
@@ -192,7 +219,7 @@ XPAN::Query - Query a {CPAN,MiniCPAN,DarkPAN} mirror
 
 =head1 VERSION
 
-This document describes version 0.02 of XPAN::Query (from Perl distribution XPAN-Query), released on 2014-06-05.
+This document describes version 0.03 of XPAN::Query (from Perl distribution XPAN-Query), released on 2014-06-05.
 
 =head1 SYNOPSIS
 
@@ -233,6 +260,8 @@ Arguments ('*' denotes required arguments):
 
 =item * B<cache_period> => I<int> (default: 86400)
 
+=item * B<query> => I<str>
+
 =item * B<temp_dir> => I<str>
 
 =item * B<url>* => I<str>
@@ -254,6 +283,8 @@ Arguments ('*' denotes required arguments):
 
 =item * B<cache_period> => I<int> (default: 86400)
 
+=item * B<query> => I<str>
+
 =item * B<temp_dir> => I<str>
 
 =item * B<url>* => I<str>
@@ -267,13 +298,15 @@ Return value:
 
 =head2 list_xpan_modules(%args) -> any
 
-List modules in {CPAN,MiniCPAN,DarkPAN} mirror.
+List packages in {CPAN,MiniCPAN,DarkPAN} mirror.
 
 Arguments ('*' denotes required arguments):
 
 =over 4
 
 =item * B<cache_period> => I<int> (default: 86400)
+
+=item * B<query> => I<str>
 
 =item * B<temp_dir> => I<str>
 
@@ -295,6 +328,8 @@ Arguments ('*' denotes required arguments):
 =over 4
 
 =item * B<cache_period> => I<int> (default: 86400)
+
+=item * B<query> => I<str>
 
 =item * B<temp_dir> => I<str>
 

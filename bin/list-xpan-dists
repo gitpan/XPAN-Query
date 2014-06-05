@@ -7,9 +7,9 @@ use warnings;
 use Perinci::CmdLine 1.04;
 
 our $DATE = '2014-06-05'; # DATE
-our $VERSION = '0.02'; # VERSION
+our $VERSION = '0.03'; # VERSION
 
-Perinci::CmdLine->new(url => "/XPAN/Query/list_xpan_authors")->run;
+Perinci::CmdLine->new(url => "/XPAN/Query/list_xpan_dists")->run;
 
 1;
 #ABSTRACT: List {CPAN,MiniCPAN,DarkPAN} distributions
@@ -27,7 +27,7 @@ list-xpan-dists - List {CPAN,MiniCPAN,DarkPAN} distributions
 
 =head1 VERSION
 
-This document describes version 0.02 of list-xpan-dists (from Perl distribution XPAN-Query), released on 2014-06-05.
+This document describes version 0.03 of list-xpan-dists (from Perl distribution XPAN-Query), released on 2014-06-05.
 
 =head1 HOMEPAGE
 

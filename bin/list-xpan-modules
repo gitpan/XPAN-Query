@@ -7,7 +7,7 @@ use warnings;
 use Perinci::CmdLine 1.04;
 
 our $DATE = '2014-06-05'; # DATE
-our $VERSION = '0.02'; # VERSION
+our $VERSION = '0.03'; # VERSION
 
 Perinci::CmdLine->new(url => "/XPAN/Query/list_xpan_modules")->run;
 
@@ -27,7 +27,7 @@ list-xpan-modules - List {CPAN,MiniCPAN,DarkPAN} modules
 
 =head1 VERSION
 
-This document describes version 0.02 of list-xpan-modules (from Perl distribution XPAN-Query), released on 2014-06-05.
+This document describes version 0.03 of list-xpan-modules (from Perl distribution XPAN-Query), released on 2014-06-05.
 
 =head1 HOMEPAGE
 
