@@ -6,10 +6,6 @@ META.json
 META.yml
 Makefile.PL
 README
-bin/list-xpan-authors
-bin/list-xpan-dists
-bin/list-xpan-modules
-bin/list-xpan-packages
 dist.ini
 lib/XPAN/Query.pm
 t/00-compile.t

@@ -2,8 +2,8 @@ NAME
     XPAN::Query - Query a {CPAN,MiniCPAN,DarkPAN} mirror
 
 VERSION
-    This document describes version 0.03 of XPAN::Query (from Perl
-    distribution XPAN-Query), released on 2014-06-05.
+    This document describes version 0.04 of XPAN::Query (from Perl
+    distribution XPAN-Query), released on 2014-06-06.
 
 SYNOPSIS
      use XPAN::Query qw(
@@ -16,8 +16,6 @@ SYNOPSIS
      # raw data is in $Ubuntu::Releases::data;
 
 DESCRIPTION
-    INITIAL RELEASE: no implementations yet.
-
     XPAN is a term I coined for any repository (directory tree, be it on a
     local filesystem or a remote network) that has structure like a CPAN
     mirror, specifically having a "modules/02packages.details.txt.gz" file.
@@ -37,7 +35,13 @@ FUNCTIONS
 
     *   cache_period => *int* (default: 86400)
 
+    *   detail => *bool*
+
+        If set to true, will return array of records instead of just ID's.
+
     *   query => *str*
+
+        Search query.
 
     *   temp_dir => *str*
 
@@ -50,11 +54,27 @@ FUNCTIONS
   list_xpan_dists(%args) -> any
     List distributions in {CPAN,MiniCPAN,DarkPAN} mirror.
 
+    For simplicity and performance, this module parses distribution names
+    from tarball filenames mentioned in "02packages.details.txt.gz", so it
+    is not perfect (some release tarballs, especially older ones, are not
+    properly named). For more proper way, one needs to read the metadata
+    file ("*.meta") for each distribution.
+
     Arguments ('*' denotes required arguments):
+
+    *   author => *str*
+
+        Filter by author.
 
     *   cache_period => *int* (default: 86400)
 
+    *   detail => *bool*
+
+        If set to true, will return array of records instead of just ID's.
+
     *   query => *str*
+
+        Search query.
 
     *   temp_dir => *str*
 
@@ -69,9 +89,23 @@ FUNCTIONS
 
     Arguments ('*' denotes required arguments):
 
+    *   author => *str*
+
+        Filter by author.
+
     *   cache_period => *int* (default: 86400)
 
+    *   detail => *bool*
+
+        If set to true, will return array of records instead of just ID's.
+
+    *   dist => *str*
+
+        Filter by distribution.
+
     *   query => *str*
+
+        Search query.
 
     *   temp_dir => *str*
 
@@ -86,9 +120,23 @@ FUNCTIONS
 
     Arguments ('*' denotes required arguments):
 
+    *   author => *str*
+
+        Filter by author.
+
     *   cache_period => *int* (default: 86400)
 
+    *   detail => *bool*
+
+        If set to true, will return array of records instead of just ID's.
+
+    *   dist => *str*
+
+        Filter by distribution.
+
     *   query => *str*
+
+        Search query.
 
     *   temp_dir => *str*
 
@@ -99,11 +147,19 @@ FUNCTIONS
     Return value:
 
 SEE ALSO
-    Parse::CPAN::Packages
+    Parse::CPAN::Packages is a more full-featured and full-fledged module to
+    parse "02packages.details.txt.gz". The downside is, startup and
+    performance is slower.
 
-    Parse::CPAN::Packages::Fast
+    Parse::CPAN::Packages::Fast is created as a more lightweight alternative
+    to Parse::CPAN::Packages.
 
-    PAUSE::Packages, PAUSE::Users
+    PAUSE::Packages also parses "02packages.details.txt.gz", it's just that
+    the interface is different.
+
+    PAUSE::Users parses "authors/00whois.xml". XPAN::Query does not parse
+    this file, it is currently not generated/downloaded by CPAN::Mini, for
+    example.
 
     Tangentially related: BackPAN::Index
 

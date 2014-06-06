@@ -16,19 +16,13 @@ my %WriteMakefileArgs = (
     "ExtUtils::MakeMaker" => "6.30"
   },
   "DISTNAME" => "XPAN-Query",
-  "EXE_FILES" => [
-    "bin/list-xpan-authors",
-    "bin/list-xpan-dists",
-    "bin/list-xpan-modules",
-    "bin/list-xpan-packages"
-  ],
+  "EXE_FILES" => [],
   "LICENSE" => "perl",
   "NAME" => "XPAN::Query",
   "PREREQ_PM" => {
     "File::Slurp::Tiny" => 0,
     "LWP::UserAgent" => 0,
     "Log::Any" => 0,
-    "Perinci::CmdLine" => "1.04",
     "Sereal" => 0,
     "String::ShellQuote" => 0,
     "URI" => 0
@@ -39,7 +33,7 @@ my %WriteMakefileArgs = (
     "IPC::Open3" => 0,
     "Test::More" => 0
   },
-  "VERSION" => "0.03",
+  "VERSION" => "0.04",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -53,7 +47,6 @@ my %FallbackPrereqs = (
   "IPC::Open3" => 0,
   "LWP::UserAgent" => 0,
   "Log::Any" => 0,
-  "Perinci::CmdLine" => "1.04",
   "Sereal" => 0,
   "String::ShellQuote" => 0,
   "Test::More" => 0,

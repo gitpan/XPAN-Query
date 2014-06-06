@@ -20,7 +20,6 @@ requires:
   File::Slurp::Tiny: '0'
   LWP::UserAgent: '0'
   Log::Any: '0'
-  Perinci::CmdLine: '1.04'
   Sereal: '0'
   String::ShellQuote: '0'
   URI: '0'
@@ -29,7 +28,7 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=XPAN-Query
   homepage: https://metacpan.org/release/XPAN-Query
   repository: git://github.com/sharyanto/perl-XPAN-Query.git
-version: '0.03'
+version: '0.04'
 x_Dist_Zilla:
   perl:
     version: '5.018002'

@@ -4,7 +4,7 @@ use warnings;
 
 # this test was generated with Dist::Zilla::Plugin::Test::Compile 2.040
 
-use Test::More  tests => 5 + ($ENV{AUTHOR_TESTING} ? 1 : 0);
+use Test::More  tests => 1 + ($ENV{AUTHOR_TESTING} ? 1 : 0);
 
 
 
@@ -12,12 +12,7 @@ my @module_files = (
     'XPAN/Query.pm'
 );
 
-my @scripts = (
-    'bin/list-xpan-authors',
-    'bin/list-xpan-dists',
-    'bin/list-xpan-modules',
-    'bin/list-xpan-packages'
-);
+
 
 # no fake home requested
 
@@ -47,31 +42,6 @@ for my $lib (@module_files)
         push @warnings, @_warnings;
     }
 }
-
-foreach my $file (@scripts)
-{ SKIP: {
-    open my $fh, '<', $file or warn("Unable to open $file: $!"), next;
-    my $line = <$fh>;
-    close $fh and skip("$file isn't perl", 1) unless $line =~ /^#!.*?\bperl\b\s*(.*)$/;
-
-    my @flags = $1 ? split(/\s+/, $1) : ();
-
-    my $stderr = IO::Handle->new;
-
-    my $pid = open3($stdin, '>&STDERR', $stderr, $^X, $inc_switch, @flags, '-c', $file);
-    binmode $stderr, ':crlf' if $^O eq 'MSWin32';
-    my @_warnings = <$stderr>;
-    waitpid($pid, 0);
-    is($?, 0, "$file compiled ok");
-
-   # in older perls, -c output is simply the file portion of the path being tested
-    if (@_warnings = grep { !/\bsyntax OK$/ }
-        grep { chomp; $_ ne (File::Spec->splitpath($file))[2] } @_warnings)
-    {
-        warn @_warnings;
-        push @warnings, @_warnings;
-    }
-} }
 
 
 

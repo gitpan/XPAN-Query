@@ -22,8 +22,8 @@ our @EXPORT_OK = qw(
                );
 
 our %SPEC;
-our $VERSION = '0.03'; # VERSION
-our $DATE = '2014-06-05'; # DATE
+our $VERSION = '0.04'; # VERSION
+our $DATE = '2014-06-06'; # DATE
 
 my %common_args = (
     url => {
@@ -41,6 +41,10 @@ my %common_args = (
             },
         },
     },
+    detail => {
+        summary => "If set to true, will return array of records instead of just ID's",
+        schema  => 'bool',
+    },
     temp_dir => {
         schema => 'str*',
     },
@@ -48,6 +52,7 @@ my %common_args = (
 
 my %query_args = (
     query => {
+        summary => 'Search query',
         schema => 'str*',
         cmdline_aliases => {q=>{}},
         pos => 1,
@@ -88,7 +93,7 @@ sub _parse {
     }
 
     # extract and process (XXX this is currently unix-specific)
-    my $sertarget = "$tmpdir/$filename.sereal-$md5";
+    my $sertarget = "$tmpdir/$filename.2.sereal-$md5";
     my @serst = stat($sertarget);
     my $data;
     if (@serst && $serst[9] >= $gzst[9]) {
@@ -110,15 +115,15 @@ sub _parse {
             my ($author, $file) = $path =~ m!^./../(.+?)/(.+)!
                 or die "Line $line: Invalid path $path";
             $authors{$author} = 1;
-            $packages{$pkg} = $ver;
+            $packages{$pkg} = {author=>$author, version=>$ver, file=>$file};
             my $dist = $file;
             # XXX should've extract metadata
-            say "D:file=$file";
             if ($dist =~ s/-v?(\d(?:\d*(\.[\d_][^.]*)*?)?).\D.+//) {
                 #say "D:  dist=$dist, 1=$1";
-                $dists{$dist} = $1;
+                $dists{$dist} = {author=>$author, version=>$1, file=>$file};
+                $packages{$pkg}{dist} = $dist;
             } else {
-                warn "Line $line: Can't parse dist version from filename $file";
+                $log->info("Line $line: Can't parse dist version from filename $file");
                 #next;
             }
         }
@@ -141,17 +146,26 @@ $SPEC{list_xpan_authors} = {
         %query_args,
     },
     result_naked => 1,
+    result => {
+        description => <<'_',
+
+By default will return an array of CPAN ID's. If you set `detail` to true, will
+return array of records.
+
+_
+    },
 };
 sub list_xpan_authors {
     my %args = @_;
+    my $detail = $args{detail};
     my $data = _parse(%args);
     my $q = lc($args{query} // '');
-    my $res = [];
+    my @res;
     for (@{ $data->{authors} }) {
         next if length($q) && index(lc($_), $q) < 0;
-        push @$res, $_;
+        push @res, $detail ? {cpanid=>$_} : $_;
     }
-    $res;
+    \@res;
 }
 
 $SPEC{list_xpan_packages} = {
@@ -160,20 +174,43 @@ $SPEC{list_xpan_packages} = {
     args => {
         %common_args,
         %query_args,
+        author => {
+            summary => 'Filter by author',
+            schema => 'str*',
+            cmdline_aliases => {a=>{}},
+        },
+        dist => {
+            summary => 'Filter by distribution',
+            schema => 'str*',
+            cmdline_aliases => {d=>{}},
+        },
     },
     result_naked => 1,
+    result => {
+        description => <<'_',
+
+By default will return an array of package names. If you set `detail` to true,
+will return array of records.
+
+_
+    },
 };
 sub list_xpan_packages {
     my %args = @_;
+    my $detail = $args{detail};
+
     my $data = _parse(%args);
     my $q = lc($args{query} // '');
-    my $res = {};
+    my @res;
     for (keys %{ $data->{packages} }) {
-        my $ver = $data->{packages}{$_};
+        my $rec = $data->{packages}{$_};
         next if length($q) && index(lc($_), $q) < 0;
-        $res->{$_} = $ver;
+        next if $args{author} && uc($args{author}) ne uc($rec->{author});
+        next if $args{dist} && $args{dist} ne $rec->{dist};
+        $rec->{name} = $_;
+        push @res, $detail ? $rec : $_;
     }
-    $res;
+    \@res;
 }
 
 $SPEC{list_xpan_modules} = $SPEC{list_xpan_packages};
@@ -184,23 +221,49 @@ sub list_xpan_modules {
 $SPEC{list_xpan_dists} = {
     v => 1.1,
     summary => 'List distributions in {CPAN,MiniCPAN,DarkPAN} mirror',
+    description => <<'_',
+
+For simplicity and performance, this module parses distribution names from
+tarball filenames mentioned in `02packages.details.txt.gz`, so it is not perfect
+(some release tarballs, especially older ones, are not properly named). For more
+proper way, one needs to read the metadata file (`*.meta`) for each
+distribution.
+
+_
     args => {
         %common_args,
         %query_args,
+        author => {
+            summary => 'Filter by author',
+            schema => 'str*',
+            cmdline_aliases => {a=>{}},
+        },
     },
     result_naked => 1,
+    result => {
+        description => <<'_',
+
+By default will return an array of distribution names. If you set `detail` to
+true, will return array of records.
+
+_
+    },
 };
 sub list_xpan_dists {
     my %args = @_;
+    my $detail = $args{detail};
+
     my $data = _parse(%args);
     my $q = lc($args{query} // '');
-    my $res = {};
+    my @res;
     for (keys %{ $data->{dists} }) {
-        my $ver = $data->{dists}{$_};
+        my $rec = $data->{dists}{$_};
         next if length($q) && index(lc($_), $q) < 0;
-        $res->{$_} = $ver;
+        next if $args{author} && uc($args{author}) ne uc($rec->{author});
+        $rec->{name} = $_;
+        push @res, $detail ? $rec : $_;
     }
-    $res;
+    \@res;
 }
 
 
@@ -219,7 +282,7 @@ XPAN::Query - Query a {CPAN,MiniCPAN,DarkPAN} mirror
 
 =head1 VERSION
 
-This document describes version 0.03 of XPAN::Query (from Perl distribution XPAN-Query), released on 2014-06-05.
+This document describes version 0.04 of XPAN::Query (from Perl distribution XPAN-Query), released on 2014-06-06.
 
 =head1 SYNOPSIS
 
@@ -233,8 +296,6 @@ This document describes version 0.03 of XPAN::Query (from Perl distribution XPAN
  # raw data is in $Ubuntu::Releases::data;
 
 =head1 DESCRIPTION
-
-B<INITIAL RELEASE: no implementations yet>.
 
 XPAN is a term I coined for any repository (directory tree, be it on a local
 filesystem or a remote network) that has structure like a CPAN mirror,
@@ -260,7 +321,13 @@ Arguments ('*' denotes required arguments):
 
 =item * B<cache_period> => I<int> (default: 86400)
 
+=item * B<detail> => I<bool>
+
+If set to true, will return array of records instead of just ID's.
+
 =item * B<query> => I<str>
+
+Search query.
 
 =item * B<temp_dir> => I<str>
 
@@ -277,13 +344,29 @@ Return value:
 
 List distributions in {CPAN,MiniCPAN,DarkPAN} mirror.
 
+For simplicity and performance, this module parses distribution names from
+tarball filenames mentioned in C<02packages.details.txt.gz>, so it is not perfect
+(some release tarballs, especially older ones, are not properly named). For more
+proper way, one needs to read the metadata file (C<*.meta>) for each
+distribution.
+
 Arguments ('*' denotes required arguments):
 
 =over 4
 
+=item * B<author> => I<str>
+
+Filter by author.
+
 =item * B<cache_period> => I<int> (default: 86400)
 
+=item * B<detail> => I<bool>
+
+If set to true, will return array of records instead of just ID's.
+
 =item * B<query> => I<str>
+
+Search query.
 
 =item * B<temp_dir> => I<str>
 
@@ -304,9 +387,23 @@ Arguments ('*' denotes required arguments):
 
 =over 4
 
+=item * B<author> => I<str>
+
+Filter by author.
+
 =item * B<cache_period> => I<int> (default: 86400)
 
+=item * B<detail> => I<bool>
+
+If set to true, will return array of records instead of just ID's.
+
+=item * B<dist> => I<str>
+
+Filter by distribution.
+
 =item * B<query> => I<str>
+
+Search query.
 
 =item * B<temp_dir> => I<str>
 
@@ -327,9 +424,23 @@ Arguments ('*' denotes required arguments):
 
 =over 4
 
+=item * B<author> => I<str>
+
+Filter by author.
+
 =item * B<cache_period> => I<int> (default: 86400)
 
+=item * B<detail> => I<bool>
+
+If set to true, will return array of records instead of just ID's.
+
+=item * B<dist> => I<str>
+
+Filter by distribution.
+
 =item * B<query> => I<str>
+
+Search query.
 
 =item * B<temp_dir> => I<str>
 
@@ -343,11 +454,18 @@ Return value:
 
 =head1 SEE ALSO
 
-L<Parse::CPAN::Packages>
+L<Parse::CPAN::Packages> is a more full-featured and full-fledged module to
+parse C<02packages.details.txt.gz>. The downside is, startup and performance is
+slower.
 
-L<Parse::CPAN::Packages::Fast>
+L<Parse::CPAN::Packages::Fast> is created as a more lightweight alternative to
+Parse::CPAN::Packages.
 
-L<PAUSE::Packages>, L<PAUSE::Users>
+L<PAUSE::Packages> also parses C<02packages.details.txt.gz>, it's just that the
+interface is different.
+
+L<PAUSE::Users> parses C<authors/00whois.xml>. XPAN::Query does not parse this
+file, it is currently not generated/downloaded by CPAN::Mini, for example.
 
 Tangentially related: L<BackPAN::Index>
 
