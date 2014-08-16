@@ -22,8 +22,8 @@ our @EXPORT_OK = qw(
                );
 
 our %SPEC;
-our $VERSION = '0.04'; # VERSION
-our $DATE = '2014-06-06'; # DATE
+our $VERSION = '0.05'; # VERSION
+our $DATE = '2014-08-16'; # DATE
 
 my %common_args = (
     url => {
@@ -154,6 +154,19 @@ return array of records.
 
 _
     },
+    examples => [
+        {
+            summary => 'List all authors',
+            argv    => ['/cpan'],
+            test    => 0,
+        },
+        {
+            summary => 'Grep by CPAN ID',
+            argv    => ['/cpan', 'MICHAEL'],
+            result  => ['MICHAEL', 'MICHAELW'],
+            test    => 0,
+        },
+    ],
 };
 sub list_xpan_authors {
     my %args = @_;
@@ -248,6 +261,44 @@ true, will return array of records.
 
 _
     },
+    examples => [
+        {
+            summary => 'List all distributions',
+            argv    => ['/cpan'],
+            test    => 0,
+        },
+        {
+            summary => 'Grep by distribution name, return detailed record',
+            argv    => ['/cpan', 'data-table'],
+            result  => [
+                {
+                    author  => "BIGJ",                          # ..{0}
+                    file    => "Data-TableAutoSum-0.08.tar.gz", # ..{1}
+                    name    => "Data-TableAutoSum",             # ..{2}
+                    version => "0.08",                          # ..{3}
+                }, # .[0]
+                {
+                    author  => "EZDB",                        # ..{0}
+                    file    => "Data-Table-Excel-0.5.tar.gz", # ..{1}
+                    name    => "Data-Table-Excel",            # ..{2}
+                    version => "0.5",                         # ..{3}
+                }, # .[1]
+                {
+                    author  => "EZDB",                   # ..{0}
+                    file    => "Data-Table-1.70.tar.gz", # ..{1}
+                    name    => "Data-Table",             # ..{2}
+                    version => "1.70",                   # ..{3}
+                }, # .[2]
+            ],     # [2]
+            test    => 0,
+        },
+        {
+            summary   => 'Filter by author, return JSON',
+            src       => 'list-xpan-packages /cpan --author sharyanto --json',
+            src_plang => 'bash',
+            test      => 0,
+        },
+    ],
 };
 sub list_xpan_dists {
     my %args = @_;
@@ -282,7 +333,7 @@ XPAN::Query - Query a {CPAN,MiniCPAN,DarkPAN} mirror
 
 =head1 VERSION
 
-This document describes version 0.04 of XPAN::Query (from Perl distribution XPAN-Query), released on 2014-06-06.
+This document describes version 0.05 of XPAN::Query (from Perl distribution XPAN-Query), released on 2014-08-16.
 
 =head1 SYNOPSIS
 
@@ -315,6 +366,20 @@ period of time).
 
 List authors in {CPAN,MiniCPAN,DarkPAN} mirror.
 
+Examples:
+
+ list_xpan_authors( url => "/cpan");
+
+
+List all authors.
+
+
+ list_xpan_authors( query => "MICHAEL", url => "/cpan"); # -> ["MICHAEL", "MICHAELW"]
+
+
+Grep by CPAN ID.
+
+
 Arguments ('*' denotes required arguments):
 
 =over 4
@@ -339,10 +404,55 @@ URL to repository, e.g. '/cpan' or 'http://host/cpan'.
 
 Return value:
 
+ (any)
+
+By default will return an array of CPAN ID's. If you set C<detail> to true, will
+return array of records.
+
 
 =head2 list_xpan_dists(%args) -> any
 
 List distributions in {CPAN,MiniCPAN,DarkPAN} mirror.
+
+Examples:
+
+ list_xpan_dists( url => "/cpan");
+
+
+List all distributions.
+
+
+ list_xpan_dists( query => "data-table", url => "/cpan");
+
+
+Result: C<< [
+  {
+    author  => "BIGJ",
+    file    => "Data-TableAutoSum-0.08.tar.gz",
+    name    => "Data-TableAutoSum",
+    version => 0.08,
+  },
+  {
+    author  => "EZDB",
+    file    => "Data-Table-Excel-0.5.tar.gz",
+    name    => "Data-Table-Excel",
+    version => 0.5,
+  },
+  {
+    author  => "EZDB",
+    file    => "Data-Table-1.70.tar.gz",
+    name    => "Data-Table",
+    version => "1.70",
+  },
+] >>.
+Grep by distribution name, return detailed record.
+
+
+ list_xpan_dists();
+
+
+Filter by author, return JSON.
+
 
 For simplicity and performance, this module parses distribution names from
 tarball filenames mentioned in C<02packages.details.txt.gz>, so it is not perfect
@@ -377,6 +487,11 @@ URL to repository, e.g. '/cpan' or 'http://host/cpan'.
 =back
 
 Return value:
+
+ (any)
+
+By default will return an array of distribution names. If you set C<detail> to
+true, will return array of records.
 
 
 =head2 list_xpan_modules(%args) -> any
@@ -415,6 +530,11 @@ URL to repository, e.g. '/cpan' or 'http://host/cpan'.
 
 Return value:
 
+ (any)
+
+By default will return an array of package names. If you set C<detail> to true,
+will return array of records.
+
 
 =head2 list_xpan_packages(%args) -> any
 
@@ -451,6 +571,11 @@ URL to repository, e.g. '/cpan' or 'http://host/cpan'.
 =back
 
 Return value:
+
+ (any)
+
+By default will return an array of package names. If you set C<detail> to true,
+will return array of records.
 
 =head1 SEE ALSO
 

@@ -2,8 +2,8 @@ NAME
     XPAN::Query - Query a {CPAN,MiniCPAN,DarkPAN} mirror
 
 VERSION
-    This document describes version 0.04 of XPAN::Query (from Perl
-    distribution XPAN-Query), released on 2014-06-06.
+    This document describes version 0.05 of XPAN::Query (from Perl
+    distribution XPAN-Query), released on 2014-08-16.
 
 SYNOPSIS
      use XPAN::Query qw(
@@ -31,6 +31,16 @@ FUNCTIONS
   list_xpan_authors(%args) -> any
     List authors in {CPAN,MiniCPAN,DarkPAN} mirror.
 
+    Examples:
+
+     list_xpan_authors( url => "/cpan");
+
+    List all authors.
+
+     list_xpan_authors( query => "MICHAEL", url => "/cpan"); # -> ["MICHAEL", "MICHAELW"]
+
+    Grep by CPAN ID.
+
     Arguments ('*' denotes required arguments):
 
     *   cache_period => *int* (default: 86400)
@@ -51,8 +61,32 @@ FUNCTIONS
 
     Return value:
 
+     (any)
+
+    By default will return an array of CPAN ID's. If you set "detail" to
+    true, will return array of records.
+
   list_xpan_dists(%args) -> any
     List distributions in {CPAN,MiniCPAN,DarkPAN} mirror.
+
+    Examples:
+
+     list_xpan_dists( url => "/cpan");
+
+    List all distributions.
+
+     list_xpan_dists( query => "data-table", url => "/cpan");
+
+    Result: "[ { author => "BIGJ", file => "Data-TableAutoSum-0.08.tar.gz",
+    name => "Data-TableAutoSum", version => 0.08, }, { author => "EZDB",
+    file => "Data-Table-Excel-0.5.tar.gz", name => "Data-Table-Excel",
+    version => 0.5, }, { author => "EZDB", file => "Data-Table-1.70.tar.gz",
+    name => "Data-Table", version => "1.70", }, ]". Grep by distribution
+    name, return detailed record.
+
+     list_xpan_dists();
+
+    Filter by author, return JSON.
 
     For simplicity and performance, this module parses distribution names
     from tarball filenames mentioned in "02packages.details.txt.gz", so it
@@ -83,6 +117,11 @@ FUNCTIONS
         URL to repository, e.g. '/cpan' or 'http://host/cpan'.
 
     Return value:
+
+     (any)
+
+    By default will return an array of distribution names. If you set
+    "detail" to true, will return array of records.
 
   list_xpan_modules(%args) -> any
     List packages in {CPAN,MiniCPAN,DarkPAN} mirror.
@@ -115,6 +154,11 @@ FUNCTIONS
 
     Return value:
 
+     (any)
+
+    By default will return an array of package names. If you set "detail" to
+    true, will return array of records.
+
   list_xpan_packages(%args) -> any
     List packages in {CPAN,MiniCPAN,DarkPAN} mirror.
 
@@ -145,6 +189,11 @@ FUNCTIONS
         URL to repository, e.g. '/cpan' or 'http://host/cpan'.
 
     Return value:
+
+     (any)
+
+    By default will return an array of package names. If you set "detail" to
+    true, will return array of records.
 
 SEE ALSO
     Parse::CPAN::Packages is a more full-featured and full-fledged module to
