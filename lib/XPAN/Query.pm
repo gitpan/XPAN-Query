@@ -1,7 +1,7 @@
 package XPAN::Query;
 
 our $DATE = '2014-12-14'; # DATE
-our $VERSION = '0.06'; # VERSION
+our $VERSION = '0.07'; # VERSION
 
 use 5.010001;
 use strict;
@@ -217,6 +217,7 @@ sub list_xpan_authors {
 
     my $dbh = _parse(%args);
     my $q = $args{query} // ''; # sqlite is case-insensitive by default, yay
+    $q = '%'.$q.'%' unless $q =~ /%/;
 
     my @bind;
     my @where;
@@ -270,6 +271,7 @@ sub list_xpan_packages {
 
     my $dbh = _parse(%args);
     my $q = $args{query} // ''; # sqlite is case-insensitive by default, yay
+    $q = '%'.$q.'%' unless $q =~ /%/;
 
     my @bind;
     my @where;
@@ -378,6 +380,7 @@ sub list_xpan_dists {
 
     my $dbh = _parse(%args);
     my $q = $args{query} // '';
+    $q = '%'.$q.'%' unless $q =~ /%/;
 
     my @bind;
     my @where;
@@ -418,7 +421,7 @@ XPAN::Query - Query a {CPAN,MiniCPAN,DarkPAN} mirror
 
 =head1 VERSION
 
-This document describes version 0.06 of XPAN::Query (from Perl distribution XPAN-Query), released on 2014-12-14.
+This document describes version 0.07 of XPAN::Query (from Perl distribution XPAN-Query), released on 2014-12-14.
 
 =head1 SYNOPSIS
 
