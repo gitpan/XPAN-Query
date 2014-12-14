@@ -62,7 +62,7 @@
          "web" : "https://github.com/sharyanto/perl-XPAN-Query"
       }
    },
-   "version" : "0.05",
+   "version" : "0.06",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018002"

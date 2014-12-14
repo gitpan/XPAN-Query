@@ -2,7 +2,7 @@ NAME
     XPAN::Query - Query a {CPAN,MiniCPAN,DarkPAN} mirror
 
 VERSION
-    This document describes version 0.05 of XPAN::Query (from Perl
+    This document describes version 0.06 of XPAN::Query (from Perl
     distribution XPAN-Query), released on 2014-12-14.
 
 SYNOPSIS

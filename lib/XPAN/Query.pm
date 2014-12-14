@@ -1,7 +1,7 @@
 package XPAN::Query;
 
 our $DATE = '2014-12-14'; # DATE
-our $VERSION = '0.05'; # VERSION
+our $VERSION = '0.06'; # VERSION
 
 use 5.010001;
 use strict;
@@ -418,7 +418,7 @@ XPAN::Query - Query a {CPAN,MiniCPAN,DarkPAN} mirror
 
 =head1 VERSION
 
-This document describes version 0.05 of XPAN::Query (from Perl distribution XPAN-Query), released on 2014-12-14.
+This document describes version 0.06 of XPAN::Query (from Perl distribution XPAN-Query), released on 2014-12-14.
 
 =head1 SYNOPSIS
 
