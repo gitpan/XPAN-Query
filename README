@@ -3,7 +3,7 @@ NAME
 
 VERSION
     This document describes version 0.05 of XPAN::Query (from Perl
-    distribution XPAN-Query), released on 2014-08-16.
+    distribution XPAN-Query), released on 2014-12-14.
 
 SYNOPSIS
      use XPAN::Query qw(
@@ -12,8 +12,19 @@ SYNOPSIS
          list_xpan_dists
          list_xpan_authors
      );
-     my $res = list_ubuntu_releases(detail=>1);
-     # raw data is in $Ubuntu::Releases::data;
+
+     # the first query will download 02packages.details.txt.gz from a CPAN mirror
+     # (the default is "/cpan" or "http://www.cpan.org/") and convert it to a SQLite
+     # database, so it will take some time, e.g. several seconds for download (1.5MB
+     # at the time of this writing, so a few seconds depending on your connection
+     # speed) plus around 10-15s for conversion.
+
+     my $res = list_xpan_authors("MICHAEL%"); # => ["MICHAEL", "MICHAELW"]
+
+     # the subsequent queries will be instantaneous, unless you change mirror site
+     # or 24 hours has passed, which is the default cache period.
+
+     my list_xpan_modules(author=>"NEILB", detail=>1);
 
 DESCRIPTION
     XPAN is a term I coined for any repository (directory tree, be it on a
@@ -33,17 +44,21 @@ FUNCTIONS
 
     Examples:
 
-     list_xpan_authors( url => "/cpan");
+     list_xpan_authors();
 
     List all authors.
 
-     list_xpan_authors( query => "MICHAEL", url => "/cpan"); # -> ["MICHAEL", "MICHAELW"]
+     list_xpan_authors( query => "MICHAEL%", url => "http://www.cpan.org/"); # -> ["MICHAEL", "MICHAELW"]
 
-    Grep by CPAN ID.
+    Find CPAN IDs which start with something.
 
     Arguments ('*' denotes required arguments):
 
     *   cache_period => *int* (default: 86400)
+
+        If you set this to 0 it means to force cache to expire. If you set
+        this to -1 it means to never expire the cache (always use the cache
+        no matter how old it is).
 
     *   detail => *bool*
 
@@ -55,9 +70,12 @@ FUNCTIONS
 
     *   temp_dir => *str*
 
-    *   url* => *str*
+    *   url => *str* (default: ["/cpan", "http://www.cpan.org/"])
 
         URL to repository, e.g. '/cpan' or 'http://host/cpan'.
+
+        If not specified, will default to "XPAN_URL" environment, or $URL
+        variable (which by default is set to "/cpan").
 
     Return value:
 
@@ -71,7 +89,7 @@ FUNCTIONS
 
     Examples:
 
-     list_xpan_dists( url => "/cpan");
+     list_xpan_dists();
 
     List all distributions.
 
@@ -102,6 +120,10 @@ FUNCTIONS
 
     *   cache_period => *int* (default: 86400)
 
+        If you set this to 0 it means to force cache to expire. If you set
+        this to -1 it means to never expire the cache (always use the cache
+        no matter how old it is).
+
     *   detail => *bool*
 
         If set to true, will return array of records instead of just ID's.
@@ -112,9 +134,12 @@ FUNCTIONS
 
     *   temp_dir => *str*
 
-    *   url* => *str*
+    *   url => *str* (default: ["/cpan", "http://www.cpan.org/"])
 
         URL to repository, e.g. '/cpan' or 'http://host/cpan'.
+
+        If not specified, will default to "XPAN_URL" environment, or $URL
+        variable (which by default is set to "/cpan").
 
     Return value:
 
@@ -134,6 +159,10 @@ FUNCTIONS
 
     *   cache_period => *int* (default: 86400)
 
+        If you set this to 0 it means to force cache to expire. If you set
+        this to -1 it means to never expire the cache (always use the cache
+        no matter how old it is).
+
     *   detail => *bool*
 
         If set to true, will return array of records instead of just ID's.
@@ -148,9 +177,12 @@ FUNCTIONS
 
     *   temp_dir => *str*
 
-    *   url* => *str*
+    *   url => *str* (default: ["/cpan", "http://www.cpan.org/"])
 
         URL to repository, e.g. '/cpan' or 'http://host/cpan'.
+
+        If not specified, will default to "XPAN_URL" environment, or $URL
+        variable (which by default is set to "/cpan").
 
     Return value:
 
@@ -170,6 +202,10 @@ FUNCTIONS
 
     *   cache_period => *int* (default: 86400)
 
+        If you set this to 0 it means to force cache to expire. If you set
+        this to -1 it means to never expire the cache (always use the cache
+        no matter how old it is).
+
     *   detail => *bool*
 
         If set to true, will return array of records instead of just ID's.
@@ -184,9 +220,12 @@ FUNCTIONS
 
     *   temp_dir => *str*
 
-    *   url* => *str*
+    *   url => *str* (default: ["/cpan", "http://www.cpan.org/"])
 
         URL to repository, e.g. '/cpan' or 'http://host/cpan'.
+
+        If not specified, will default to "XPAN_URL" environment, or $URL
+        variable (which by default is set to "/cpan").
 
     Return value:
 
@@ -195,6 +234,21 @@ FUNCTIONS
     By default will return an array of package names. If you set "detail" to
     true, will return array of records.
 
+VARIABLES
+  $XPAN::Query::CACHE_PERIOD => int (default: 86400)
+    Set default cache period, in seconds.
+
+  $XPAN::Query::URL => str (default: "/cpan")
+    Set default XPAN URL.
+
+ENVIRONMENT
+  XPAN_CACHE_PERIOD => int
+    Can be used to preset $XPAN::Query::CACHE_PERIOD.
+
+  XPAN_URL => str
+    Can be used to preset $XPAN::Query::URL.
+
+TODO
 SEE ALSO
     Parse::CPAN::Packages is a more full-featured and full-fledged module to
     parse "02packages.details.txt.gz". The downside is, startup and
@@ -227,10 +281,10 @@ BUGS
     to an existing test-file that illustrates the bug or desired feature.
 
 AUTHOR
-    Steven Haryanto <stevenharyanto@gmail.com>
+    perlancar <perlancar@cpan.org>
 
 COPYRIGHT AND LICENSE
-    This software is copyright (c) 2014 by Steven Haryanto.
+    This software is copyright (c) 2014 by perlancar@cpan.org.
 
     This is free software; you can redistribute it and/or modify it under
     the same terms as the Perl 5 programming language system itself.
