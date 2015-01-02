@@ -1,7 +1,7 @@
 package XPAN::Query;
 
-our $DATE = '2014-12-14'; # DATE
-our $VERSION = '0.07'; # VERSION
+our $DATE = '2015-01-02'; # DATE
+our $VERSION = '0.08'; # VERSION
 
 use 5.010001;
 use strict;
@@ -24,6 +24,11 @@ our @EXPORT_OK = qw(
                );
 
 our %SPEC;
+
+$SPEC{':package'} = {
+    v => 1.1,
+    summary => 'Query a {CPAN,MiniCPAN,DarkPAN} mirror',
+};
 
 our $CACHE_PERIOD = $ENV{XPAN_CACHE_PERIOD} // 86400;
 our $URL          = $ENV{XPAN_URL} // ["/cpan", "http://www.cpan.org/"];
@@ -115,6 +120,7 @@ sub _parse {
             $has_success_url++;
             $log->tracef("Writing %s ...", $gztarget);
             write_file($gztarget, $res->content);
+            last DOWNLOAD;
         }
     }
 
@@ -421,7 +427,7 @@ XPAN::Query - Query a {CPAN,MiniCPAN,DarkPAN} mirror
 
 =head1 VERSION
 
-This document describes version 0.07 of XPAN::Query (from Perl distribution XPAN-Query), released on 2014-12-14.
+This document describes version 0.08 of XPAN::Query (from Perl distribution XPAN-Query), released on 2015-01-02.
 
 =head1 SYNOPSIS
 
@@ -761,7 +767,7 @@ perlancar <perlancar@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2014 by perlancar@cpan.org.
+This software is copyright (c) 2015 by perlancar@cpan.org.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

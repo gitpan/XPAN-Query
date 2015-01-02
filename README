@@ -1,291 +1,75 @@
-NAME
-    XPAN::Query - Query a {CPAN,MiniCPAN,DarkPAN} mirror
-
-VERSION
-    This document describes version 0.07 of XPAN::Query (from Perl
-    distribution XPAN-Query), released on 2014-12-14.
-
 SYNOPSIS
+
      use XPAN::Query qw(
          list_xpan_packages
          list_xpan_modules
          list_xpan_dists
          list_xpan_authors
      );
-
+    
      # the first query will download 02packages.details.txt.gz from a CPAN mirror
      # (the default is "/cpan" or "http://www.cpan.org/") and convert it to a SQLite
      # database, so it will take some time, e.g. several seconds for download (1.5MB
      # at the time of this writing, so a few seconds depending on your connection
      # speed) plus around 10-15s for conversion.
-
+    
      my $res = list_xpan_authors("MICHAEL%"); # => ["MICHAEL", "MICHAELW"]
-
+    
      # the subsequent queries will be instantaneous, unless you change mirror site
      # or 24 hours has passed, which is the default cache period.
-
+    
      my list_xpan_modules(author=>"NEILB", detail=>1);
 
 DESCRIPTION
+
     XPAN is a term I coined for any repository (directory tree, be it on a
     local filesystem or a remote network) that has structure like a CPAN
-    mirror, specifically having a "modules/02packages.details.txt.gz" file.
+    mirror, specifically having a modules/02packages.details.txt.gz file.
     This includes a normal CPAN mirror, a MiniCPAN, or a DarkPAN. Currently
-    it *excludes* BackPAN, because it does not have
-    "02packages.details.txt.gz", only "authors/id/C/CP/CPANID" directories.
+    it excludes BackPAN, because it does not have
+    02packages.details.txt.gz, only authors/id/C/CP/CPANID directories.
 
     With this module, you can query various things about the repository.
-    This module fetches "02packages.details.txt.gz" and parses it (caching
-    it locally for a period of time).
-
-FUNCTIONS
-  list_xpan_authors(%args) -> any
-    List authors in {CPAN,MiniCPAN,DarkPAN} mirror.
-
-    Examples:
-
-     list_xpan_authors();
-
-    List all authors.
-
-     list_xpan_authors( query => "MICHAEL%", url => "http://www.cpan.org/"); # -> ["MICHAEL", "MICHAELW"]
-
-    Find CPAN IDs which start with something.
-
-    Arguments ('*' denotes required arguments):
-
-    *   cache_period => *int* (default: 86400)
-
-        If you set this to 0 it means to force cache to expire. If you set
-        this to -1 it means to never expire the cache (always use the cache
-        no matter how old it is).
-
-    *   detail => *bool*
-
-        If set to true, will return array of records instead of just ID's.
-
-    *   query => *str*
-
-        Search query.
-
-    *   temp_dir => *str*
-
-    *   url => *str* (default: ["/cpan", "http://www.cpan.org/"])
-
-        URL to repository, e.g. '/cpan' or 'http://host/cpan'.
-
-        If not specified, will default to "XPAN_URL" environment, or $URL
-        variable (which by default is set to "/cpan").
-
-    Return value:
-
-     (any)
-
-    By default will return an array of CPAN ID's. If you set "detail" to
-    true, will return array of records.
-
-  list_xpan_dists(%args) -> any
-    List distributions in {CPAN,MiniCPAN,DarkPAN} mirror.
-
-    Examples:
-
-     list_xpan_dists();
-
-    List all distributions.
-
-     list_xpan_dists( query => "data-table", url => "/cpan");
-
-    Result: "[ { author => "BIGJ", file => "Data-TableAutoSum-0.08.tar.gz",
-    name => "Data-TableAutoSum", version => 0.08, }, { author => "EZDB",
-    file => "Data-Table-Excel-0.5.tar.gz", name => "Data-Table-Excel",
-    version => 0.5, }, { author => "EZDB", file => "Data-Table-1.70.tar.gz",
-    name => "Data-Table", version => "1.70", }, ]". Grep by distribution
-    name, return detailed record.
-
-     list_xpan_dists();
-
-    Filter by author, return JSON.
-
-    For simplicity and performance, this module parses distribution names
-    from tarball filenames mentioned in "02packages.details.txt.gz", so it
-    is not perfect (some release tarballs, especially older ones, are not
-    properly named). For more proper way, one needs to read the metadata
-    file ("*.meta") for each distribution.
-
-    Arguments ('*' denotes required arguments):
-
-    *   author => *str*
-
-        Filter by author.
-
-    *   cache_period => *int* (default: 86400)
-
-        If you set this to 0 it means to force cache to expire. If you set
-        this to -1 it means to never expire the cache (always use the cache
-        no matter how old it is).
-
-    *   detail => *bool*
-
-        If set to true, will return array of records instead of just ID's.
-
-    *   query => *str*
-
-        Search query.
-
-    *   temp_dir => *str*
-
-    *   url => *str* (default: ["/cpan", "http://www.cpan.org/"])
-
-        URL to repository, e.g. '/cpan' or 'http://host/cpan'.
-
-        If not specified, will default to "XPAN_URL" environment, or $URL
-        variable (which by default is set to "/cpan").
-
-    Return value:
-
-     (any)
-
-    By default will return an array of distribution names. If you set
-    "detail" to true, will return array of records.
-
-  list_xpan_modules(%args) -> any
-    List packages in {CPAN,MiniCPAN,DarkPAN} mirror.
-
-    Arguments ('*' denotes required arguments):
-
-    *   author => *str*
-
-        Filter by author.
-
-    *   cache_period => *int* (default: 86400)
-
-        If you set this to 0 it means to force cache to expire. If you set
-        this to -1 it means to never expire the cache (always use the cache
-        no matter how old it is).
-
-    *   detail => *bool*
-
-        If set to true, will return array of records instead of just ID's.
-
-    *   dist => *str*
-
-        Filter by distribution.
-
-    *   query => *str*
-
-        Search query.
-
-    *   temp_dir => *str*
-
-    *   url => *str* (default: ["/cpan", "http://www.cpan.org/"])
-
-        URL to repository, e.g. '/cpan' or 'http://host/cpan'.
-
-        If not specified, will default to "XPAN_URL" environment, or $URL
-        variable (which by default is set to "/cpan").
-
-    Return value:
-
-     (any)
-
-    By default will return an array of package names. If you set "detail" to
-    true, will return array of records.
-
-  list_xpan_packages(%args) -> any
-    List packages in {CPAN,MiniCPAN,DarkPAN} mirror.
-
-    Arguments ('*' denotes required arguments):
-
-    *   author => *str*
-
-        Filter by author.
-
-    *   cache_period => *int* (default: 86400)
-
-        If you set this to 0 it means to force cache to expire. If you set
-        this to -1 it means to never expire the cache (always use the cache
-        no matter how old it is).
-
-    *   detail => *bool*
-
-        If set to true, will return array of records instead of just ID's.
-
-    *   dist => *str*
-
-        Filter by distribution.
-
-    *   query => *str*
-
-        Search query.
-
-    *   temp_dir => *str*
-
-    *   url => *str* (default: ["/cpan", "http://www.cpan.org/"])
-
-        URL to repository, e.g. '/cpan' or 'http://host/cpan'.
-
-        If not specified, will default to "XPAN_URL" environment, or $URL
-        variable (which by default is set to "/cpan").
-
-    Return value:
-
-     (any)
-
-    By default will return an array of package names. If you set "detail" to
-    true, will return array of records.
+    This module fetches 02packages.details.txt.gz and parses it (caching it
+    locally for a period of time).
 
 VARIABLES
-  $XPAN::Query::CACHE_PERIOD => int (default: 86400)
+
+ $XPAN::Query::CACHE_PERIOD => int (default: 86400)
+
     Set default cache period, in seconds.
 
-  $XPAN::Query::URL => str (default: "/cpan")
+ $XPAN::Query::URL => str (default: "/cpan")
+
     Set default XPAN URL.
 
 ENVIRONMENT
-  XPAN_CACHE_PERIOD => int
+
+ XPAN_CACHE_PERIOD => int
+
     Can be used to preset $XPAN::Query::CACHE_PERIOD.
 
-  XPAN_URL => str
+ XPAN_URL => str
+
     Can be used to preset $XPAN::Query::URL.
 
 TODO
+
 SEE ALSO
-    Parse::CPAN::Packages is a more full-featured and full-fledged module to
-    parse "02packages.details.txt.gz". The downside is, startup and
+
+    Parse::CPAN::Packages is a more full-featured and full-fledged module
+    to parse 02packages.details.txt.gz. The downside is, startup and
     performance is slower.
 
-    Parse::CPAN::Packages::Fast is created as a more lightweight alternative
-    to Parse::CPAN::Packages.
+    Parse::CPAN::Packages::Fast is created as a more lightweight
+    alternative to Parse::CPAN::Packages.
 
-    PAUSE::Packages also parses "02packages.details.txt.gz", it's just that
+    PAUSE::Packages also parses 02packages.details.txt.gz, it's just that
     the interface is different.
 
-    PAUSE::Users parses "authors/00whois.xml". XPAN::Query does not parse
+    PAUSE::Users parses authors/00whois.xml. XPAN::Query does not parse
     this file, it is currently not generated/downloaded by CPAN::Mini, for
     example.
 
     Tangentially related: BackPAN::Index
-
-HOMEPAGE
-    Please visit the project's homepage at
-    <https://metacpan.org/release/XPAN-Query>.
-
-SOURCE
-    Source repository is at <https://github.com/sharyanto/perl-XPAN-Query>.
-
-BUGS
-    Please report any bugs or feature requests on the bugtracker website
-    <https://rt.cpan.org/Public/Dist/Display.html?Name=XPAN-Query>
-
-    When submitting a bug or request, please include a test-file or a patch
-    to an existing test-file that illustrates the bug or desired feature.
-
-AUTHOR
-    perlancar <perlancar@cpan.org>
-
-COPYRIGHT AND LICENSE
-    This software is copyright (c) 2014 by perlancar@cpan.org.
-
-    This is free software; you can redistribute it and/or modify it under
-    the same terms as the Perl 5 programming language system itself.
 
