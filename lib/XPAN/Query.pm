@@ -1,7 +1,7 @@
 package XPAN::Query;
 
-our $DATE = '2015-01-02'; # DATE
-our $VERSION = '0.08'; # VERSION
+our $DATE = '2015-01-04'; # DATE
+our $VERSION = '0.09'; # VERSION
 
 use 5.010001;
 use strict;
@@ -398,7 +398,7 @@ sub list_xpan_dists {
         push @where, "(author=?)";
         push @bind, $args{author};
     }
-    my $sql = "SELECT * FROM package".
+    my $sql = "SELECT * FROM dist".
         (@where ? " WHERE ".join(" AND ", @where) : "").
             " ORDER BY name";
 
@@ -427,7 +427,7 @@ XPAN::Query - Query a {CPAN,MiniCPAN,DarkPAN} mirror
 
 =head1 VERSION
 
-This document describes version 0.08 of XPAN::Query (from Perl distribution XPAN-Query), released on 2015-01-02.
+This document describes version 0.09 of XPAN::Query (from Perl distribution XPAN-Query), released on 2015-01-04.
 
 =head1 SYNOPSIS
 
@@ -513,9 +513,7 @@ If not specified, will default to C<XPAN_URL> environment, or C<$URL> variable
 
 =back
 
-Return value:
-
- (any)
+Return value:  (any)
 
 By default will return an array of CPAN ID's. If you set C<detail> to true, will
 return array of records.
@@ -603,9 +601,7 @@ If not specified, will default to C<XPAN_URL> environment, or C<$URL> variable
 
 =back
 
-Return value:
-
- (any)
+Return value:  (any)
 
 By default will return an array of distribution names. If you set C<detail> to
 true, will return array of records.
@@ -651,9 +647,7 @@ If not specified, will default to C<XPAN_URL> environment, or C<$URL> variable
 
 =back
 
-Return value:
-
- (any)
+Return value:  (any)
 
 By default will return an array of package names. If you set C<detail> to true,
 will return array of records.
@@ -699,9 +693,7 @@ If not specified, will default to C<XPAN_URL> environment, or C<$URL> variable
 
 =back
 
-Return value:
-
- (any)
+Return value:  (any)
 
 By default will return an array of package names. If you set C<detail> to true,
 will return array of records.
@@ -725,8 +717,6 @@ Can be used to preset C<$XPAN::Query::CACHE_PERIOD>.
 =head2 XPAN_URL => str
 
 Can be used to preset C<$XPAN::Query::URL>.
-
-=head1 TODO
 
 =head1 SEE ALSO
 

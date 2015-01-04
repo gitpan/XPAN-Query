@@ -53,8 +53,6 @@ ENVIRONMENT
 
     Can be used to preset $XPAN::Query::URL.
 
-TODO
-
 SEE ALSO
 
     Parse::CPAN::Packages is a more full-featured and full-fledged module

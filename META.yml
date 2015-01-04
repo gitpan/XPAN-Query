@@ -32,7 +32,7 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=XPAN-Query
   homepage: https://metacpan.org/release/XPAN-Query
   repository: git://github.com/sharyanto/perl-XPAN-Query.git
-version: '0.08'
+version: '0.09'
 x_Dist_Zilla:
   perl:
     version: '5.018002'
@@ -254,7 +254,7 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::Rinci::Validate
       name: '@Author::PERLANCAR/Rinci::Validate'
-      version: '0.19'
+      version: '0.20'
     -
       class: Dist::Zilla::Plugin::SetScriptShebang
       name: '@Author::PERLANCAR/SetScriptShebang'
@@ -284,6 +284,10 @@ x_Dist_Zilla:
       class: Dist::Zilla::Plugin::Test::Rinci
       name: '@Author::PERLANCAR/Test::Rinci'
       version: '0.01'
+    -
+      class: Dist::Zilla::Plugin::PERLANCAR::GenTodoMd
+      name: '@Author::PERLANCAR/PERLANCAR::GenTodoMd'
+      version: '0.03'
     -
       class: Dist::Zilla::Plugin::Prereqs
       config:
