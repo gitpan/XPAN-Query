@@ -1,7 +1,7 @@
 package XPAN::Query;
 
-our $DATE = '2015-01-04'; # DATE
-our $VERSION = '0.09'; # VERSION
+our $DATE = '2015-01-08'; # DATE
+our $VERSION = '0.10'; # VERSION
 
 use 5.010001;
 use strict;
@@ -427,7 +427,7 @@ XPAN::Query - Query a {CPAN,MiniCPAN,DarkPAN} mirror
 
 =head1 VERSION
 
-This document describes version 0.09 of XPAN::Query (from Perl distribution XPAN-Query), released on 2015-01-04.
+This document describes version 0.10 of XPAN::Query (from Perl distribution XPAN-Query), released on 2015-01-08.
 
 =head1 SYNOPSIS
 
@@ -469,7 +469,7 @@ period of time).
 
 =head2 list_xpan_authors(%args) -> any
 
-List authors in {CPAN,MiniCPAN,DarkPAN} mirror.
+{en_US List authors in {CPAN,MiniCPAN,DarkPAN} mirror}.
 
 Examples:
 
@@ -491,37 +491,44 @@ Arguments ('*' denotes required arguments):
 
 =item * B<cache_period> => I<int> (default: 86400)
 
+{en_US 
 If you set this to 0 it means to force cache to expire. If you set this to -1 it
 means to never expire the cache (always use the cache no matter how old it is).
+}
 
 =item * B<detail> => I<bool>
 
-If set to true, will return array of records instead of just ID's.
+{en_US If set to true, will return array of records instead of just ID's}.
 
 =item * B<query> => I<str>
 
-Search query.
+{en_US Search query}.
 
 =item * B<temp_dir> => I<str>
 
 =item * B<url> => I<str> (default: ["/cpan", "http://www.cpan.org/"])
 
-URL to repository, e.g. '/cpan' or 'http://host/cpan'.
+{en_US URL to repository, e.g. '/cpan' or 'http://host/cpan'}.
 
+{en_US 
 If not specified, will default to C<XPAN_URL> environment, or C<$URL> variable
 (which by default is set to C</cpan>).
+}
 
 =back
 
 Return value:  (any)
 
+
+{en_US 
 By default will return an array of CPAN ID's. If you set C<detail> to true, will
 return array of records.
+}
 
 
 =head2 list_xpan_dists(%args) -> any
 
-List distributions in {CPAN,MiniCPAN,DarkPAN} mirror.
+{en_US List distributions in {CPAN,MiniCPAN,DarkPAN} mirror}.
 
 Examples:
 
@@ -563,11 +570,13 @@ Grep by distribution name, return detailed record.
 Filter by author, return JSON.
 
 
+{en_US 
 For simplicity and performance, this module parses distribution names from
 tarball filenames mentioned in C<02packages.details.txt.gz>, so it is not perfect
 (some release tarballs, especially older ones, are not properly named). For more
 proper way, one needs to read the metadata file (C<*.meta>) for each
 distribution.
+}
 
 Arguments ('*' denotes required arguments):
 
@@ -575,41 +584,48 @@ Arguments ('*' denotes required arguments):
 
 =item * B<author> => I<str>
 
-Filter by author.
+{en_US Filter by author}.
 
 =item * B<cache_period> => I<int> (default: 86400)
 
+{en_US 
 If you set this to 0 it means to force cache to expire. If you set this to -1 it
 means to never expire the cache (always use the cache no matter how old it is).
+}
 
 =item * B<detail> => I<bool>
 
-If set to true, will return array of records instead of just ID's.
+{en_US If set to true, will return array of records instead of just ID's}.
 
 =item * B<query> => I<str>
 
-Search query.
+{en_US Search query}.
 
 =item * B<temp_dir> => I<str>
 
 =item * B<url> => I<str> (default: ["/cpan", "http://www.cpan.org/"])
 
-URL to repository, e.g. '/cpan' or 'http://host/cpan'.
+{en_US URL to repository, e.g. '/cpan' or 'http://host/cpan'}.
 
+{en_US 
 If not specified, will default to C<XPAN_URL> environment, or C<$URL> variable
 (which by default is set to C</cpan>).
+}
 
 =back
 
 Return value:  (any)
 
+
+{en_US 
 By default will return an array of distribution names. If you set C<detail> to
 true, will return array of records.
+}
 
 
 =head2 list_xpan_modules(%args) -> any
 
-List packages in {CPAN,MiniCPAN,DarkPAN} mirror.
+{en_US List packages in {CPAN,MiniCPAN,DarkPAN} mirror}.
 
 Arguments ('*' denotes required arguments):
 
@@ -617,45 +633,52 @@ Arguments ('*' denotes required arguments):
 
 =item * B<author> => I<str>
 
-Filter by author.
+{en_US Filter by author}.
 
 =item * B<cache_period> => I<int> (default: 86400)
 
+{en_US 
 If you set this to 0 it means to force cache to expire. If you set this to -1 it
 means to never expire the cache (always use the cache no matter how old it is).
+}
 
 =item * B<detail> => I<bool>
 
-If set to true, will return array of records instead of just ID's.
+{en_US If set to true, will return array of records instead of just ID's}.
 
 =item * B<dist> => I<str>
 
-Filter by distribution.
+{en_US Filter by distribution}.
 
 =item * B<query> => I<str>
 
-Search query.
+{en_US Search query}.
 
 =item * B<temp_dir> => I<str>
 
 =item * B<url> => I<str> (default: ["/cpan", "http://www.cpan.org/"])
 
-URL to repository, e.g. '/cpan' or 'http://host/cpan'.
+{en_US URL to repository, e.g. '/cpan' or 'http://host/cpan'}.
 
+{en_US 
 If not specified, will default to C<XPAN_URL> environment, or C<$URL> variable
 (which by default is set to C</cpan>).
+}
 
 =back
 
 Return value:  (any)
 
+
+{en_US 
 By default will return an array of package names. If you set C<detail> to true,
 will return array of records.
+}
 
 
 =head2 list_xpan_packages(%args) -> any
 
-List packages in {CPAN,MiniCPAN,DarkPAN} mirror.
+{en_US List packages in {CPAN,MiniCPAN,DarkPAN} mirror}.
 
 Arguments ('*' denotes required arguments):
 
@@ -663,40 +686,47 @@ Arguments ('*' denotes required arguments):
 
 =item * B<author> => I<str>
 
-Filter by author.
+{en_US Filter by author}.
 
 =item * B<cache_period> => I<int> (default: 86400)
 
+{en_US 
 If you set this to 0 it means to force cache to expire. If you set this to -1 it
 means to never expire the cache (always use the cache no matter how old it is).
+}
 
 =item * B<detail> => I<bool>
 
-If set to true, will return array of records instead of just ID's.
+{en_US If set to true, will return array of records instead of just ID's}.
 
 =item * B<dist> => I<str>
 
-Filter by distribution.
+{en_US Filter by distribution}.
 
 =item * B<query> => I<str>
 
-Search query.
+{en_US Search query}.
 
 =item * B<temp_dir> => I<str>
 
 =item * B<url> => I<str> (default: ["/cpan", "http://www.cpan.org/"])
 
-URL to repository, e.g. '/cpan' or 'http://host/cpan'.
+{en_US URL to repository, e.g. '/cpan' or 'http://host/cpan'}.
 
+{en_US 
 If not specified, will default to C<XPAN_URL> environment, or C<$URL> variable
 (which by default is set to C</cpan>).
+}
 
 =back
 
 Return value:  (any)
 
+
+{en_US 
 By default will return an array of package names. If you set C<detail> to true,
 will return array of records.
+}
 
 =head1 VARIABLES
 
@@ -733,6 +763,11 @@ interface is different.
 L<PAUSE::Users> parses C<authors/00whois.xml>. XPAN::Query does not parse this
 file, it is currently not generated/downloaded by CPAN::Mini, for example.
 
+L<CPANDB::Generator>. This will generate a local C<CPANDB> SQLite database like
+XPAN::Query. However, it generates a more complete index (e.g. dependency graph)
+but require a (local) CPAN mirror instead of just 02packages.details.txt.gz
+file.
+
 Tangentially related: L<BackPAN::Index>
 
 =head1 HOMEPAGE
@@ -741,7 +776,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/XPAN-Query
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/sharyanto/perl-XPAN-Query>.
+Source repository is at L<https://github.com/perlancar/perl-XPAN-Query>.
 
 =head1 BUGS
 

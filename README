@@ -69,5 +69,10 @@ SEE ALSO
     this file, it is currently not generated/downloaded by CPAN::Mini, for
     example.
 
+    CPANDB::Generator. This will generate a local CPANDB SQLite database
+    like XPAN::Query. However, it generates a more complete index (e.g.
+    dependency graph) but require a (local) CPAN mirror instead of just
+    02packages.details.txt.gz file.
+
     Tangentially related: BackPAN::Index
 
